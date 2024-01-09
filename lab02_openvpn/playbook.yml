@@ -65,12 +65,12 @@
   - name: Copiando arquivos para a pasta do openvpn
     copy:
       src: "{{item}}"
-     dest: /etc/openvpn/server
+      dest: /etc/openvpn/server
       remote_src: yes
     with_items:
       - /etc/openvpn/easy-rsa/pki/ca.crt
       - /etc/openvpn/easy-rsa/pki/dh.pem
-      - /etc/openvpn/easy-rsa/pki/issued/server.crt
+      - /etc/openvpn/easy-rsa/pki/issued/server.crt"
     
   - name: "Criando arquivo de configuracao"
     copy:
