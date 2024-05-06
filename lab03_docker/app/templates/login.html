@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+
+<body>
+
+
+    <h1 id="titulo">Simple Login</h1>
+    <div id="div_login">
+        
+        <form action="/login" id="form_login" method="post">
+            <label id="Nome">Nome</label>
+            <input type="text" name="nome_campo" id="nome_campo"><br><br>
+            <label id="senha"id="senha">Senha</label>
+            <input type="password" name="senha_campo" id="senha_campo"><br><br>
+            <button type="submit" id="botao_login">Entrar</button><br><br>
+            <a href="{{ url_for('cadastro')}}">Cadastre -se</a>
+
+        </form>
+    </div>
+</body>
+
+</html>

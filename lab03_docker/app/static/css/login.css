@@ -1,0 +1,25 @@
+@charset "UTF-8";
+body{
+    background-color: rgb(233, 230, 230);
+}
+
+h1{
+   
+    width: 100%;
+    text-align: center;
+}
+
+div#div_login{
+    align-self: center;
+    background-color: rgb(218, 214, 214);
+    margin-top: 10%;
+    margin-left: 35%;
+    margin-right: 35%;
+    padding: 1%;
+    border-radius: 10px;
+
+}
+
+form{
+    text-align: center;
+}
