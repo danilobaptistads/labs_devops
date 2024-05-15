@@ -1,0 +1,7 @@
+export KEY_COUNTRY="BR"
+export KEY_PROVINCE="RJ"
+export KEY_CITY="Rio de Janeiro"
+export KEY_ORG="DevOps"
+export KEY_EMAIL="danilobaptistads@gmail.com"
+export KEY_OU="DevOps"
+export KEY_NAME="fw01-DevOps"

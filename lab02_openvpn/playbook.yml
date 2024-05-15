@@ -1,0 +1,105 @@
+- hosts: Servidor
+  become: yes
+  tasks:
+  - name: "Atualizando e instalado dependencias"  
+    apt:
+      update_cache: yes
+      name: "{{item}}"
+    with_items:
+    - openvpn 
+    - easy-rsa 
+    - libssl-dev
+    - liblzo2-dev
+    - libpam0g-dev
+
+  - name: "Criando diretorios necessarios"
+    file: 
+      path: "{{item}}"
+      state: directory
+    with_items:
+    - /etc/openvpn/easy-rsa
+    - /etc/openvpn/ccd
+    - /var/log/openvpn
+
+  - name: "Movendo Arquivos rsa"
+    copy: 
+     src: /usr/share/easy-rsa/
+     dest: /etc/openvpn/easy-rsa
+     remote_src: yes      
+
+  - name: "Criando arquivo com as variaveis"
+    copy:
+      src: arquivos/vars
+      dest: /etc/openvpn/easy-rsa
+
+  - name: "inicializando diretorio pki"
+    shell: ./easyrsa init-pki
+    args:
+      chdir: /etc/openvpn/easy-rsa
+      executable: /bin/bash
+
+  - name: "Criando Ca"
+    shell: ./easyrsa --batch --vars='/etc/openvpn/easy-rsa/vars' build-ca nopass
+    args: 
+      chdir: /etc/openvpn/easy-rsa/
+      executable: /bin/bash
+
+  - name: "Gerando Certificado"
+    shell: ./easyrsa --batch --vars='/etc/openvpn/easy-rsa/vars' gen-req server nopass
+    args:
+      chdir: /etc/openvpn/easy-rsa
+      executable: /bin/bash
+
+  - name: "Assinando Certificado"
+    shell: ./easyrsa --batch --vars='/etc/openvpn/easy-rsa/vars' sign-req server server
+    args:
+      chdir: /etc/openvpn/easy-rsa/
+      executable: /bin/bash
+
+  - name: "Gerando Dh"
+    shell: ./easyrsa --batch --vars='/etc/openvpn/easy-rsa/vars' gen-dh
+    args:
+      chdir: /etc/openvpn/easy-rsa/
+      executable: /bin/bash
+
+  - name: Copiando arquivos para a pasta do openvpn
+    copy:
+      src: "{{item}}"
+      dest: /etc/openvpn/server
+      remote_src: yes
+    with_items:
+      - /etc/openvpn/easy-rsa/pki/ca.crt
+      - /etc/openvpn/easy-rsa/pki/dh.pem
+      - /etc/openvpn/easy-rsa/pki/issued/server.crt
+
+  - name: "Criando arquivo de configuracao"
+    copy:
+      src: arquivos/server.conf
+      dest: /etc/openvpn/server
+
+  - name: "Criando arquivo autenticacao Pan"
+    copy:
+      src: arquivos/openvpn
+      dest: /etc/pam.d
+
+  - name: "criando grupo nobody" 
+    group:
+      name: nobody
+      state: present
+  - name: 
+    ansible.posix.sysctl:
+      name: net.ipv4.ip_forward
+      value: '1'
+      sysctl_set: true
+      state: present
+      reload: true
+
+  - name: "Iniciando Openvpn"
+    service: 
+      name: openvpn-server@server
+      state: started
+
+  - name: "Adicionanso a inicialização"
+    service: 
+      name: openvpn-server@server
+      enabled: true
